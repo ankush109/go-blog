@@ -1,6 +1,7 @@
 package http
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/ankush109/go-blog/internal/domain"
@@ -25,9 +26,10 @@ func (u *UserHandler) Register(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Bad request"})
 		return
 	}
-	err := u.usecase.Register(user.Email, user.Password)
+	err := u.usecase.Register(user.Name, user.Email, user.Password)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error in creating user!"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
 	}
 	c.JSON(http.StatusOK, gin.H{"success": "User created successfully!"})
 
@@ -43,9 +45,10 @@ func (u *UserHandler) Login(c *gin.Context) {
 	accessToken, err := u.usecase.Login(user.Email, user.Password)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "bad"})
+		return
 	}
 	// create a access Token :
-
-	c.JSON(200, gin.H{"ok": accessToken})
+	fmt.Println(accessToken, "access token")
+	c.JSON(200, gin.H{"accessToken": accessToken})
 
 }

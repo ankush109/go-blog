@@ -4,8 +4,8 @@ import "gorm.io/gorm"
 
 type User struct {
 	gorm.Model
-	Id       uint `gorm:"primaryKey"`
-	Email    string
+
+	Email    string `gorm:"uniqueIndex;not null"`
 	Name     string
 	Password string
 	Posts    []Post `gorm:"foreignKey:UserID"`

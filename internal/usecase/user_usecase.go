@@ -14,7 +14,7 @@ import (
 var jwtSecret = []byte("ankush2003")
 
 type UserUseCase interface {
-	Register(email string, password string) error
+	Register(name string, email string, password string) error
 	Login(email string, password string) (string, error)
 }
 
@@ -33,27 +33,27 @@ func (u *userUseCase) Login(email string, password string) (string, error) {
 	if err != nil {
 		return "", errors.New("Invalid credentials!")
 	}
-	token := jwt.NewWithClaims(jwt.SigningMethodES256, jwt.MapClaims{
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user_id": user.ID,
 		"exp":     time.Now().Add(time.Hour * 24).Unix(),
 	})
 	accessToken, err := token.SignedString(jwtSecret)
-	return accessToken, nil
+	return accessToken, err
 }
 
 // Register implements UserUseCase.
-func (u *userUseCase) Register(email string, password string) error {
+func (u *userUseCase) Register(name string, email string, password string) error {
 	fmt.Println("in register usecase")
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
 	}
-	//
-	fmt.Println(hashedPassword)
+
 	user := &domain.User{
 		Email:    email,
 		Password: string(hashedPassword),
-		Name:     "Ankush",
+		Name:     name,
 	}
 	return u.repo.CreateUser(user)
 }

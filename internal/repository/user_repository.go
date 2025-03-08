@@ -23,8 +23,11 @@ func (r *userRepository) CreateUser(user *domain.User) error {
 func (r *userRepository) GetUserByEmail(email string) (*domain.User, error) {
 	var user domain.User
 	err := r.db.Where("email = ?", email).First(&user).Error
-	fmt.Println(user.Name, "ok")
-	return &user, err
+	if err != nil {
+		return nil, err
+	}
+	fmt.Printf("user: %v\n", user.ID)
+	return &user, nil
 }
 
 func NewRepository(db *gorm.DB) UserRepository {

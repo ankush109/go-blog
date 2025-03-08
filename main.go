@@ -16,6 +16,11 @@ func main() {
 	userRepo := repository.NewRepository(db)
 	userUseCase := usecase.NewUseCaseRepository(userRepo)
 	http.NewUserHandler(r, userUseCase)
+
+	postRepo := repository.NewPostRepository(db)
+	postUseCase := usecase.NewPostUseCase(postRepo)
+	http.NewPostHandler(r, postUseCase)
+
 	r.GET("/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{"status": "server is rnning"})
 	})
